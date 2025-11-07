@@ -32,6 +32,18 @@
         "videos",
         "audios"
       ]
+    },
+    "orders": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::order.order",
+      "mappedBy": "items"
+    },
+    "category_product": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category-product.category-product",
+      "inversedBy": "products"
     }
   }
 }
