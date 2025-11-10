@@ -5,7 +5,7 @@ export default [
     config: {
       enabled: true,
       origin: [
-        "http://localhost:3000/", // din web-frontend
+        "http://localhost:3000", // din web-frontend
         "http://127.0.0.1:3000/", // fallback
         "http://localhost:19006/", // Expo (mobil)
         "http://127.0.0.1:19006/",
