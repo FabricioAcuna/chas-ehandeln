@@ -1,4 +1,4 @@
-"use client"; // :white_check_mark: behövs eftersom vi använder useCart()
+"use client"; 
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 // import { useCart } from "../contexts/CartContext";
@@ -7,7 +7,7 @@ export const Navbar: React.FC = () => {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/productsPage", label: "Products" },
-    { href: "/orders", label: "Orders" },
+    { href: "/cart", label: "Orders" },
   ];
   return (
     <nav className="navbar">
@@ -26,7 +26,7 @@ export const Navbar: React.FC = () => {
           ))}
         </div>
         {/* Cart */}
-        <Link href="/Cart" className="cart-button">
+        <Link href="/cart" className="cart-button">
           <ShoppingCart />
           {/* {totalItems > 0 && <span className="cart-count">{totalItems}</span>} */}
         </Link>

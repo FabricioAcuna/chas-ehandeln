@@ -7,9 +7,14 @@ import type { Product } from "../../../../../packages/shared/src/types";
 import { useEffect } from "react";
 import { event } from "../../../lib/gtag";
 import Head from "next/head";
+import { useCartStore } from "../../../store/cartStore";
+
 
 export default function ProductPage() {
+
+ 
   const { documentId } = useParams();
+  const addToCart = useCartStore((state) => state.addToCart);
 
   const { data: products, isLoading } = useQuery<Product[]>({
     queryKey: ["products"],
@@ -37,6 +42,9 @@ export default function ProductPage() {
   const imageUrl =
     product.image?.[0]?.formats?.medium?.url || product.image?.[0]?.url || null;
 
+    
+
+
   return (
     <>
       <Head>
@@ -46,34 +54,44 @@ export default function ProductPage() {
         <meta name="description" content={descText.slice(0, 150)} />
       </Head>
 
-      <main style={{ padding: "2rem" }}>
-        <h1>{product.name}</h1>
-
+      <main className="product-detail-container">
+       
+         <div className="product-image-section">
         {imageUrl && (
           <img
             src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${imageUrl}`}
             alt={product.image[0].alternativeText || product.name}
-            style={{ maxWidth: "300px", marginBottom: "1rem" }}
+            // style={{ maxWidth: "300px", marginBottom: "1rem" }}
+            className="product-image"
           />
         )}
-
-        <p>{descText}</p>
-        <p>
+        </div>
+        <div className="product-info-section">
+         <h1 className="product-title">{product.name}</h1>
+         <p className="product-price">
           <strong>Pris:</strong> {product.price} kr
         </p>
-
+        <p className="product-description">{descText}</p>
+        <div className="product-sizes">
+          <h3>Select Size:</h3>
+          <div className="size-options">
+            <button className="size-btn">S</button>
+            <button className="size-btn">M</button>
+            <button className="size-btn">L</button>
+            <button className="size-btn">XL</button>
+          </div>
+        </div>
+       
         {product.inStock ? (
-          <button
-            onClick={() =>
-              alert(`Lade ${product.name} i kundkorgen (funktion kommer snart)`)
-            }
-          >
-            Lägg i kundkorg
-          </button>
-        ) : (
-          <span>Slut i lager</span>
-        )}
+         <button onClick={() => addToCart(product)} className="add-to-cart-btn">
+         Lägg i kundkorg
+         </button>
+         ) : (
+         <span>Slut i lager</span>
+         )}
+         </div>
       </main>
     </>
   );
 }
+
