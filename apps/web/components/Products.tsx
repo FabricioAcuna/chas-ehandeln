@@ -29,10 +29,9 @@ export default function HomePage() {
           content="Köp fotbollströjor 2024/2025 från Milan, Barca, Juventus m.fl."
         />
       </Head>
-      {/* <Hero /> */}
-
+      
       <main>
-        <h1 className="products-title">Produkter</h1>
+        <h1 className="products-title">Jerseys</h1>
 
         <ul className="products-grid">
           {products?.map((p) => {
@@ -40,30 +39,7 @@ export default function HomePage() {
               p.image?.[0]?.formats?.large?.url || p.image?.[0]?.url || null;
 
             return (
-              // <li
-              //   key={p.id}
-              //   style={{
-              //     marginBottom: "1rem",
-              //     display: "flex",
-              //     alignItems: "center",
-              //   }}
-              // >
-              //   {imageUrl && (
-              //     <img
-              //       src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${imageUrl}`}
-              //       alt={p.image[0].alternativeText || p.name}
-              //       style={{
-              //         width: 50,
-              //         height: 50,
-              //         marginRight: "1rem",
-              //         objectFit: "cover",
-              //       }}
-              //     />
-              //   )}
-              //   <Link href={`/products/${p.documentId}`}>
-              //     <strong>{p.name}</strong> – {p.price} kr
-              //   </Link>
-              // </li>
+              
               <Link
                 key={p.id}
                 href={`/products/${p.documentId}`}
