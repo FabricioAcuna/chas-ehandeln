@@ -1,7 +1,6 @@
 const STRAPI_BASE =
   process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
 
-
 export const strapiGetProducts = async () => {
   const res = await fetch(`${STRAPI_BASE}/api/products?populate=image`);
   if (!res.ok) throw new Error("Failed to fetch products");

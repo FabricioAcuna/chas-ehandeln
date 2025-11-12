@@ -1,29 +1,48 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Design system matching web app
+ * Primary color: #0070f3 (blue)
+ * Hover color: #005bb5 (darker blue)
+ * Background: white (#fff) and light gray (#f5f5f5)
  */
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+// Web app primary color
+const primaryColor = '#0070f3';
+const primaryHover = '#005bb5';
+const lightGray = '#f5f5f5';
+const borderColor = '#ddd';
 
 export const Colors = {
   light: {
     text: '#11181C',
     background: '#fff',
-    tint: tintColorLight,
+    backgroundSecondary: lightGray,
+    tint: primaryColor,
+    tintHover: primaryHover,
     icon: '#687076',
     tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    tabIconSelected: primaryColor,
+    border: borderColor,
+    primary: primaryColor,
+    primaryHover: primaryHover,
+    cardBackground: '#fff',
+    shadow: 'rgba(0, 0, 0, 0.1)',
   },
   dark: {
     text: '#ECEDEE',
     background: '#151718',
-    tint: tintColorDark,
+    backgroundSecondary: '#1D3D47',
+    tint: '#fff',
+    tintHover: primaryColor,
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    tabIconSelected: '#fff',
+    border: '#333',
+    primary: primaryColor,
+    primaryHover: primaryHover,
+    cardBackground: '#1f1f1f',
+    shadow: 'rgba(0, 0, 0, 0.3)',
   },
 };
 
