@@ -21,34 +21,35 @@ export default function CheckoutPage() {
   const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "sb";
 
   const handleApprove = async () => {
-    try {
-      const jwt = getJWT();
-      if (!jwt) throw new Error("User är inte inloggad");
+  try {
+    const jwt = getJWT();
+    if (!jwt) throw new Error("User är inte inloggad");
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/orders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
+    const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify({
+        data: {
+          total,
+          items: items.map((item) => ({ id: item.documentId })), 
+          statusOrder: "paid",
         },
-        body: JSON.stringify({
-          data: {
-            total,
-            items: items.map((item) => ({ id: item.documentId })),
-            statusOrder: "paid",
-          },
-        }),
-      });
+      }),
+    });
 
-      if (!res.ok) throw new Error("Failed to save order in Strapi");
+    if (!res.ok) throw new Error("Failed to save order in Strapi");
 
-      setPaid(true);
-      clearCart();
-    } catch (error) {
-      console.error(error);
-      alert("Något gick fel vid sparning av order.");
-    }
-  };
+    setPaid(true);
+    clearCart();
+  } catch (error) {
+    console.error(error);
+    alert("Något gick fel vid sparning av order.");
+  }
+};
+
 
   if (items.length === 0 && !paid) {
     return (

@@ -16,14 +16,19 @@ export default function ProductPage() {
   const addToCart = useCartStore((state) => state.addToCart);
  
   const [added, setAdded] = useState(false); 
-  const handleAddToCart = () => {
-  addToCart(product);
+ const handleAddToCart = () => {
+  if (!product) return;
+
+  addToCart({
+    documentId: product.id.toString(), 
+    name: product.name,
+    price: product.price,
+  });
   setAdded(true);
-  setTimeout(() => setAdded(false), 1500); 
+  setTimeout(() => setAdded(false), 1500);
 };
 
 
- 
   const { data: products, isLoading } = useQuery<Product[]>({
     queryKey: ["products"],
     queryFn: strapiGetProducts,
@@ -56,11 +61,12 @@ export default function ProductPage() {
 
   return (
     <>
-      <Head>
-        <title>
-          {product.name} – {product.price} kr
-        </title>
-        <meta name="description" content={descText.slice(0, 150)} />
+        <Head>
+        <title>{product.name} Officiell Fotbollströja {product.price} kr</title>
+        <meta
+          name="description"
+          content={`Köp ${product.name} fotbollströja för ${product.price} kr. Officiell jersey för spel och samling.`}
+        />
       </Head>
 
       <main className="product-detail-container">
@@ -79,10 +85,10 @@ export default function ProductPage() {
           <p className="product-price">
             <strong>Pris:</strong> {product.price} kr
           </p>
-          <p className="product-description">{descText}</p>
+          <p className="product-description">{descText} - Officiell fotbollströja från toppklubbar - hög kvalitet och hållbarhet.</p>
 
           <div className="product-sizes">
-            <h3>Select Size:</h3>
+            <h3>Välj Storlek:</h3>
             <div className="size-options">
               {sizes.map((size) => (
                 <button

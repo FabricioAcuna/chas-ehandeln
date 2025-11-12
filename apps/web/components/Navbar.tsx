@@ -5,9 +5,9 @@ import { useCartStore } from "../store/cartStore";
 
 export const Navbar: React.FC = () => {
   const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/productsPage", label: "Products" },
-    { href: "/cart", label: "Orders" },
+    { href: "/", label: "Hem" },
+    { href: "/productsPage", label: "Fotbollströjor" },
+    { href: "/cart", label: "Korg" },
   ];
 
   const totalItems = useCartStore((state) => state.totalItems); 
@@ -15,13 +15,13 @@ export const Navbar: React.FC = () => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        {/* Logo */}
+        
         <Link href="/" className="logo">
           <div className="logo-icon" />
           <span className="logo-text">FootballStore</span>
         </Link>
 
-        {/* Navigation Links */}
+       
         <div className="nav-links">
           {navLinks.map((link) => (
             <Link key={link.href} href={link.href} className="nav-link">
@@ -30,7 +30,7 @@ export const Navbar: React.FC = () => {
           ))}
         </div>
 
-        {/* Cart */}
+        
         <Link href="/checkout" className="cart-button" style={{ position: "relative" }}>
           <ShoppingCart size={28} />
           {totalItems > 0 && (

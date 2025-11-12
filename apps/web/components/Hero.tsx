@@ -6,17 +6,19 @@ export const Hero: React.FC = () => {
       <div className="hero-container">
         <div className="hero-text">
           <h1 className="hero-title">
-            Elevate Your Game with Premium Football jerseys
+              Höj ditt spel med premium fotbollströjor
           </h1>
           <p className="hero-subtitle">
-           Premium football jerseys designed for peak performance on the pitch.<br/>High-quality materials ensure durability and peak performance on the pitch<br/>  Show your team spirit with official designs from top clubs.
+           Fotbollströjor i premiumkvalitet, designade för maximal prestanda på planen.<br />
+           Tillverkade i slitstarka material som ger komfort och hållbarhet i varje match.<br />
+           Visa ditt stöd med officiella designer från världens främsta klubbar.
           </p>
           <div className="hero-buttons">
             <Link href="/productsPage" className="btn btn-primary">
-              Shop Now
+              Shoppa nu
             </Link>
             <Link href="/productsPage" className="btn btn-secondary">
-              View Jerseys
+              Se fotbollströjor
             </Link>
           </div>
         </div>

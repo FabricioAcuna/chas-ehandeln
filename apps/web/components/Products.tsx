@@ -23,15 +23,15 @@ export default function HomePage() {
   return (
     <>
       <Head>
-        <title>Fotbollströjor – Eshoppen</title>
+        <title>Fotbollströjor Online - Köp Officiella Jerseys 2024/2025</title>
         <meta
           name="description"
-          content="Köp fotbollströjor 2024/2025 från Milan, Barca, Juventus m.fl."
+          content="Köp fotbollströjor 2024/2025 från topplagen Milan, Barcelona, Juventus, Arsenal och fler. Officiella jerseys med snabb leverans."
         />
       </Head>
       
       <main>
-        <h1 className="products-title">Jerseys</h1>
+        <h1 className="products-title">Officiella Fotbollströjor</h1>
 
         <ul className="products-grid">
           {products?.map((p) => {
@@ -55,11 +55,16 @@ export default function HomePage() {
                       />
                     </div>
                   )}
+            
                   <div className="card-info">
                     <span className="product-name">{p.name}</span>
                     <span className="product-price">{p.price}:-</span>
                   </div>
+                  <div className="productCard-button-container">
+                  <button  className="productCard-button">Se tillgänglihet</button>
+                  </div>
                 </li>
+                
               </Link>
             );
           })}
