@@ -27,12 +27,10 @@ const CART_STORAGE_KEY = 'cart-storage';
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>([]);
 
-  // Load cart from storage on mount
   useEffect(() => {
     loadCart();
   }, []);
 
-  // Save cart to storage whenever items change
   useEffect(() => {
     saveCart();
   }, [items]);

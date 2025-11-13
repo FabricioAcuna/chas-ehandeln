@@ -1,50 +1,95 @@
-# Welcome to your Expo app 👋
+# Mobile App - E-handel
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+En React Native-app byggd med Expo som visar och hanterar produkter från Strapi CMS.
 
-## Get started
+## Funktioner
 
-1. Install dependencies
+### Produkter
+- **Hemskärm**: Visar hero-sektion och produkter från Strapi
+- **Exempelprodukter**: Två produkter med lokala bilder visas ovanför Strapi-produkterna
+- **Produktsida**: Visar alla produkter från Strapi med bilder och priser
+- **Produktdetaljer**: Visar detaljerad information om en produkt med möjlighet att välja storlek
 
-   ```bash
-   npm install
-   ```
+### Varukorg
+- Lägga till produkter i varukorgen
+- Ändra antal produkter
+- Ta bort produkter
+- Varukorgen sparas automatiskt och behålls mellan sessioner
 
-2. Start the app
+### Beställningar
+- **Kassa**: Formulär för att slutföra en beställning
+- **Orderbekräftelse**: Bekräftelseskärm efter beställning
+- **Orderhistorik**: Visar alla tidigare beställningar från Strapi
 
-   ```bash
-   npx expo start
-   ```
+## Teknisk information
 
-In the output, you'll find options to open the app in a
+### Huvudkomponenter
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **CartContext** (`components/CartContext.tsx`): Hanterar varukorgens state och sparar i AsyncStorage
+- **strapiConfig** (`lib/strapiConfig.ts`): Konfiguration för Strapi API-anslutning och bild-URL:er
+- **strapiClient** (`packages/shared/src/strapiClient.ts`): Funktioner för att hämta produkter och orders från Strapi
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### Screens
 
-## Get a fresh project
+- **index.tsx**: Huvudskärm med hero-sektion och produkter
+- **products.tsx**: Alla produkter från Strapi
+- **ProductDetail.tsx**: Detaljerad produktvy
+- **cart.tsx**: Varukorg
+- **CheckoutScreen.tsx**: Kassa och beställningsformulär
+- **OrderConfirmationScreen.tsx**: Bekräftelse efter beställning
+- **orders.tsx**: Orderhistorik
 
-When you're ready, run:
+### Datahantering
 
-```bash
-npm run reset-project
+- **React Query**: Används för att hämta data från Strapi API
+- **AsyncStorage**: Sparar varukorgen lokalt på enheten
+- **Strapi Integration**: Produkter och orders hämtas från Strapi CMS
+
+## Miljövariabler
+
+Skapa en `.env` fil i `apps/mobile/` mappen:
+
+```env
+EXPO_PUBLIC_STRAPI_URL=http://192.168.0.24:1337
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+**Viktigt**: För fysiska enheter (iOS/Android) måste du använda din dators IP-adress istället för `localhost`.
 
-## Learn more
+## Installation och körning
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+# Installera dependencies
+yarn install
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+# Starta appen
+yarn start
+```
 
-## Join the community
+## Struktur
 
-Join our community of developers creating universal apps.
+```
+apps/mobile/
+├── app/                    # Screens och routing
+│   └── (tabs)/            # Tab-navigation
+├── components/            # Återanvändbara komponenter
+├── lib/                   # Konfiguration och utilities
+├── constants/             # Färger och tema
+└── assets/               # Bilder och statiska filer
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Design
+
+Appen använder en enkel och ren design med:
+- Tydliga produktkort med bilder
+- Enkel navigation med tabs
+- Tydliga knappar och formulär
+- Responsiv layout
+
+## Funktioner som fungerar
+
+✅ Visa produkter från Strapi  
+✅ Lägga till produkter i varukorg  
+✅ Hantera varukorg (lägg till, ta bort, ändra antal)  
+✅ Slutföra beställning och spara i Strapi  
+✅ Visa orderhistorik från Strapi  
+✅ Exempelprodukter med lokala bilder  

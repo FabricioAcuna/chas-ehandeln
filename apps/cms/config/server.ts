@@ -12,7 +12,13 @@ export default ({ env }) => ({
     },
   },
   cors: {
-    origin: ["http://localhost:3000/", "http://localhost:19006/"], // web + expo
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:19006",
+      // Tillåt alla lokala nätverksadresser för fysiska enheter
+      /^http:\/\/192\.168\.\d+\.\d+:\d+$/,
+      /^http:\/\/10\.\d+\.\d+\.\d+:\d+$/,
+    ],
     credentials: true,
   },
 });

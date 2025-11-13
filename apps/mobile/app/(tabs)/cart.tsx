@@ -40,17 +40,31 @@ export default function CartScreen() {
       </View>
 
       <View style={styles.cartItems}>
-        {items.map((item) => (
-          <View key={item.documentId} style={styles.cartItem}>
-            {item.image && (
-              <View style={styles.cartItemImageContainer}>
-                <ExpoImage
-                  source={{ uri: item.image }}
-                  style={styles.cartItemImage}
-                  contentFit="cover"
-                />
-              </View>
-            )}
+        {items.map((item) => {
+          const isExample = item.documentId.startsWith("example-");
+          let imageSource = null;
+
+          if (isExample) {
+            if (item.documentId === "example-1") {
+              imageSource = require("@/assets/images/chelsea.jpg");
+            } else if (item.documentId === "example-2") {
+              imageSource = require("@/assets/images/hero-boost.jpg");
+            }
+          } else if (item.image) {
+            imageSource = { uri: item.image };
+          }
+
+          return (
+            <View key={item.documentId} style={styles.cartItem}>
+              {imageSource && (
+                <View style={styles.cartItemImageContainer}>
+                  <ExpoImage
+                    source={imageSource}
+                    style={styles.cartItemImage}
+                    contentFit="cover"
+                  />
+                </View>
+              )}
             <View style={styles.cartItemInfo}>
               <Text style={styles.cartItemName}>{item.name}</Text>
               {item.size && (
@@ -87,7 +101,8 @@ export default function CartScreen() {
               <Ionicons name="trash-outline" size={20} color="#DC2626" />
             </TouchableOpacity>
           </View>
-        ))}
+          );
+        })}
       </View>
 
       <View style={styles.cartTotal}>

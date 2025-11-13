@@ -18,6 +18,27 @@ import { getStrapiImageUrl } from "@/lib/strapiConfig";
 
 const sizes = ["S", "M", "L", "XL"];
 
+const exampleProducts = [
+  {
+    documentId: "example-1",
+    name: "Chelsea Home Jersey 2024",
+    price: 899,
+    image: require("@/assets/images/chelsea.jpg"),
+    description:
+      "Officiell Chelsea hemtröja 2024. Premium kvalitet med adidas teknologi.",
+    inStock: true,
+  },
+  {
+    documentId: "example-2",
+    name: "Pro Boots Premium",
+    price: 1299,
+    image: require("@/assets/images/hero-boost.jpg"),
+    description:
+      "Professionella fotbollsskor med boost-teknologi för maximal komfort och prestanda.",
+    inStock: true,
+  },
+];
+
 export default function ProductDetail() {
   const { documentId } = useLocalSearchParams<{ documentId: string }>();
   const router = useRouter();
@@ -25,20 +46,37 @@ export default function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
 
+  const isExample = documentId.startsWith("example-");
+
   const { data: products, isLoading } = useQuery<Product[]>({
     queryKey: ["products"],
     queryFn: strapiGetProducts,
+    enabled: !isExample,
   });
 
-  const product = products?.find((p: Product) => p.documentId === documentId);
-  const imageUrl =
-    product?.image?.[0]?.formats?.medium?.url ||
-    product?.image?.[0]?.url ||
-    null;
-  const fullImageUrl = getStrapiImageUrl(imageUrl);
-  const descText = product?.description?.[0]?.children?.[0]?.text || "";
+  let product: any;
+  let imageSource: any = null;
+  let description = "";
 
-  if (isLoading) {
+  if (isExample) {
+    product = exampleProducts.find((p) => p.documentId === documentId);
+    if (product) {
+      imageSource = product.image;
+      description = product.description;
+    }
+  } else {
+    product = products?.find((p: Product) => p.documentId === documentId);
+    if (product) {
+      const imageUrl =
+        product.image?.[0]?.formats?.medium?.url || product.image?.[0]?.url;
+      if (imageUrl) {
+        imageSource = { uri: getStrapiImageUrl(imageUrl) };
+      }
+      description = product.description?.[0]?.children?.[0]?.text || "";
+    }
+  }
+
+  if (!isExample && isLoading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={Colors.light.primary} />
@@ -67,12 +105,27 @@ export default function ProductDetail() {
       return;
     }
 
+    let imageUrl: string | undefined;
+    if (isExample) {
+      // För exempelprodukter kan vi inte spara bild-URL, men vi kan identifiera dem
+      imageUrl = undefined;
+    } else if (imageSource && "uri" in imageSource) {
+      imageUrl = imageSource.uri;
+    } else if (product.image?.[0]) {
+      const imageUrlFromProduct =
+        product.image[0].formats?.medium?.url || product.image[0].url;
+      if (imageUrlFromProduct) {
+        const fullUrl = getStrapiImageUrl(imageUrlFromProduct);
+        imageUrl = fullUrl || undefined;
+      }
+    }
+
     addToCart({
       documentId: product.documentId,
       name: product.name,
       price: product.price,
       size: selectedSize,
-      image: fullImageUrl || undefined,
+      image: imageUrl,
     });
 
     setAdded(true);
@@ -82,9 +135,9 @@ export default function ProductDetail() {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.imageSection}>
-        {fullImageUrl ? (
+        {imageSource ? (
           <ExpoImage
-            source={{ uri: fullImageUrl }}
+            source={imageSource}
             style={styles.productImage}
             contentFit="cover"
             transition={200}
@@ -102,10 +155,7 @@ export default function ProductDetail() {
           <Text style={styles.priceLabel}>Pris: </Text>
           {product.price} kr
         </Text>
-        <Text style={styles.productDescription}>
-          {descText ||
-            "Officiell fotbollströja från toppklubbar - hög kvalitet och hållbarhet."}
-        </Text>
+        <Text style={styles.productDescription}>{description}</Text>
 
         <View style={styles.sizesSection}>
           <Text style={styles.sizesTitle}>Välj Storlek:</Text>

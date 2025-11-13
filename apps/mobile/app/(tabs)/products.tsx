@@ -15,6 +15,23 @@ import { strapiGetProducts } from "../../../../packages/shared/src/strapiClient"
 import type { Product } from "../../../../packages/shared/src/types";
 import { getStrapiImageUrl } from "@/lib/strapiConfig";
 
+const exampleProducts = [
+  {
+    documentId: "example-1",
+    name: "Chelsea Home Jersey 2024",
+    price: 899,
+    image: require("@/assets/images/chelsea.jpg"),
+    inStock: true,
+  },
+  {
+    documentId: "example-2",
+    name: "Pro Boots Premium",
+    price: 1299,
+    image: require("@/assets/images/hero-boost.jpg"),
+    inStock: true,
+  },
+];
+
 export default function ProductsScreen() {
   const router = useRouter();
 
@@ -37,14 +54,9 @@ export default function ProductsScreen() {
   }
 
   if (error) {
-    const errorMessage = error instanceof Error ? error.message : "Okänt fel";
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorTitle}>Kunde inte ladda produkter</Text>
-        <Text style={styles.errorText}>{errorMessage}</Text>
-        <Text style={styles.errorHint}>
-          Kontrollera att Strapi är igång och att EXPO_PUBLIC_STRAPI_URL är korrekt satt.
-        </Text>
         <TouchableOpacity
           style={styles.retryButton}
           onPress={() => router.replace("/(tabs)/products")}
@@ -55,7 +67,12 @@ export default function ProductsScreen() {
     );
   }
 
-  if (!products || products.length === 0) {
+  const allProducts = [
+    ...exampleProducts,
+    ...(products || []),
+  ];
+
+  if (allProducts.length === 0) {
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>Inga produkter tillgängliga</Text>
@@ -70,16 +87,25 @@ export default function ProductsScreen() {
       </View>
 
       <View style={styles.productsGrid}>
-        {products.map((product: Product) => {
-          const imageUrl =
-            product.image?.[0]?.formats?.large?.url ||
-            product.image?.[0]?.url ||
-            null;
-          const fullImageUrl = getStrapiImageUrl(imageUrl);
+        {allProducts.map((product: any) => {
+          const isExample = product.documentId?.startsWith("example-");
+          let imageSource = null;
+
+          if (isExample) {
+            imageSource = product.image;
+          } else {
+            const imageUrl =
+              product.image?.[0]?.formats?.large?.url ||
+              product.image?.[0]?.url ||
+              null;
+            if (imageUrl) {
+              imageSource = { uri: getStrapiImageUrl(imageUrl) };
+            }
+          }
 
           return (
             <TouchableOpacity
-              key={product.id}
+              key={product.documentId || product.id}
               style={styles.productCard}
               onPress={() =>
                 router.push({
@@ -90,9 +116,9 @@ export default function ProductsScreen() {
               activeOpacity={0.9}
             >
               <View style={styles.cardImageContainer}>
-                {fullImageUrl ? (
+                {imageSource ? (
                   <ExpoImage
-                    source={{ uri: fullImageUrl }}
+                    source={imageSource}
                     style={styles.cardImage}
                     contentFit="cover"
                     transition={200}

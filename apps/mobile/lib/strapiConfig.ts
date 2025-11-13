@@ -1,29 +1,28 @@
-// Get Strapi URL from environment variable
-// Expo uses EXPO_PUBLIC_ prefix for environment variables
-// Also set NEXT_PUBLIC_STRAPI_URL for compatibility with shared strapiClient
-// Fallback to localhost if not set
 const strapiUrl =
   process.env.EXPO_PUBLIC_STRAPI_URL || 
   process.env.NEXT_PUBLIC_STRAPI_URL || 
   'http://localhost:1337';
 
-// Set it for strapiClient compatibility (if not already set)
 if (!process.env.NEXT_PUBLIC_STRAPI_URL && process.env.EXPO_PUBLIC_STRAPI_URL) {
   process.env.NEXT_PUBLIC_STRAPI_URL = process.env.EXPO_PUBLIC_STRAPI_URL;
 }
 
 export const STRAPI_BASE_URL = strapiUrl;
 
-// Helper function to get full image URL from Strapi
 export const getStrapiImageUrl = (imageUrl: string | null | undefined): string | null => {
   if (!imageUrl) return null;
   
-  // If imageUrl already includes http, return as is
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    const url = new URL(imageUrl);
+    if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+      const strapiUrlObj = new URL(STRAPI_BASE_URL);
+      url.hostname = strapiUrlObj.hostname;
+      url.port = strapiUrlObj.port;
+      return url.toString();
+    }
     return imageUrl;
   }
   
-  // Otherwise, prepend Strapi base URL
   return `${STRAPI_BASE_URL}${imageUrl}`;
 };
 

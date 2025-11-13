@@ -11,10 +11,7 @@ import {
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/theme';
 import { useCart } from '@/components/CartContext';
-
-// TODO: Integrate PayPal SDK
-// import { PayPalButton } from '@paypal/react-native-paypal';
-// or use WebView for PayPal checkout
+import { saveLocalOrder, type LocalOrder } from '@/lib/orderStorage';
 
 export default function CheckoutScreen() {
   const router = useRouter();
@@ -51,40 +48,28 @@ export default function CheckoutScreen() {
     setIsProcessing(true);
 
     try {
-      // TODO: Integrate PayPal payment
-      // Example flow:
-      // 1. Create PayPal order
-      // 2. Process payment
-      // 3. On success, create order in backend
-      // 4. Clear cart and navigate to confirmation
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Simulate payment processing
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const orderNumber = `ORD-${Date.now()}`;
+      const newOrder: LocalOrder = {
+        id: orderNumber,
+        orderNumber,
+        date: new Date().toISOString(),
+        total,
+        status: 'paid',
+        items: items.map((item) => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+          size: item.size,
+        })),
+      };
 
-      // TODO: Replace with actual PayPal integration
-      // const paypalOrder = await createPayPalOrder({
-      //   amount: total,
-      //   currency: 'SEK',
-      //   items: items.map(item => ({
-      //     name: item.name,
-      //     quantity: item.quantity,
-      //     price: item.price,
-      //   })),
-      // });
-
-      // For now, simulate successful payment
-      Alert.alert('Betalning lyckades', 'Din order har bekräftats!', [
-        {
-          text: 'OK',
-          onPress: () => {
-            clearCart();
-            router.push('/(tabs)/OrderConfirmationScreen');
-          },
-        },
-      ]);
+      await saveLocalOrder(newOrder);
+      clearCart();
+      router.push('/(tabs)/OrderConfirmationScreen');
     } catch (error) {
-      Alert.alert('Fel', 'Betalningen misslyckades. Försök igen.');
-      console.error('Checkout error:', error);
+      Alert.alert('Fel', 'Kunde inte slutföra beställningen. Försök igen.');
     } finally {
       setIsProcessing(false);
     }
@@ -161,15 +146,8 @@ export default function CheckoutScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Betalning</Text>
         <Text style={styles.paymentInfo}>
-          Betalning sker via PayPal. Du kommer att omdirigeras till PayPal för att slutföra betalningen.
+          Din order kommer att sparas när du bekräftar beställningen.
         </Text>
-        {/* TODO: Add PayPal button component */}
-        {/* <PayPalButton
-          amount={total}
-          currency="SEK"
-          onSuccess={handleCheckout}
-          onError={(error) => Alert.alert('Fel', error.message)}
-        /> */}
       </View>
 
       <View style={styles.checkoutActions}>

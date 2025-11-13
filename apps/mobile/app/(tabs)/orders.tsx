@@ -1,59 +1,53 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import {
   ScrollView,
   StyleSheet,
   View,
   Text,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
-
-// TODO: Replace with actual order data from API/backend
-// This is ready for integration with order history API
-
-interface Order {
-  id: string;
-  orderNumber: string;
-  date: string;
-  total: number;
-  status: "completed" | "pending" | "cancelled";
-  items: Array<{ name: string; quantity: number; price: number }>;
-}
-
-// Mock data - ready for API integration
-const mockOrders: Order[] = [
-  {
-    id: "1",
-    orderNumber: "ORD-2024-001",
-    date: "2024-01-15",
-    total: 1798,
-    status: "completed",
-    items: [{ name: "Chelsea Home Jersey 2024", quantity: 2, price: 899 }],
-  },
-  {
-    id: "2",
-    orderNumber: "ORD-2024-002",
-    date: "2024-01-10",
-    total: 899,
-    status: "completed",
-    items: [{ name: "Arsenal Home Jersey 2024", quantity: 1, price: 899 }],
-  },
-];
+import { getLocalOrders, type LocalOrder } from "@/lib/orderStorage";
 
 export default function OrdersScreen() {
   const router = useRouter();
+  const [orders, setOrders] = useState<LocalOrder[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // TODO: Fetch orders from API
-  // const { data: orders, isLoading } = useQuery<Order[]>({
-  //   queryKey: ['orders'],
-  //   queryFn: fetchOrders,
-  // });
+  const loadOrders = async () => {
+    setIsLoading(true);
+    try {
+      const localOrders = await getLocalOrders();
+      const sortedOrders = localOrders.sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+      setOrders(sortedOrders);
+    } catch (error) {
+      console.error("Error loading orders:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const orders = mockOrders; // Remove when using API
+  useFocusEffect(
+    useCallback(() => {
+      loadOrders();
+    }, [])
+  );
 
-  if (orders.length === 0) {
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={Colors.light.primary} />
+        <Text style={styles.loadingText}>Laddar ordrar...</Text>
+      </View>
+    );
+  }
+
+  if (!orders || orders.length === 0) {
     return (
       <View style={styles.emptyContainer}>
         <Ionicons name="receipt-outline" size={64} color={Colors.light.icon} />
@@ -68,6 +62,28 @@ export default function OrdersScreen() {
     );
   }
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("sv-SE", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const getStatusText = (status: string) => {
+    if (status === "paid") return "Betalad";
+    if (status === "pending") return "Väntande";
+    if (status === "shipped") return "Skickad";
+    return "Okänd";
+  };
+
+  const getStatusColor = (status: string) => {
+    if (status === "paid" || status === "shipped") return styles.statusCompleted;
+    if (status === "pending") return styles.statusPending;
+    return styles.statusCancelled;
+  };
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
@@ -80,24 +96,11 @@ export default function OrdersScreen() {
             <View style={styles.orderHeader}>
               <View>
                 <Text style={styles.orderNumber}>{order.orderNumber}</Text>
-                <Text style={styles.orderDate}>{order.date}</Text>
+                <Text style={styles.orderDate}>{formatDate(order.date)}</Text>
               </View>
-              <View
-                style={[
-                  styles.statusBadge,
-                  order.status === "completed"
-                    ? styles.statusCompleted
-                    : order.status === "pending"
-                      ? styles.statusPending
-                      : styles.statusCancelled,
-                ]}
-              >
+              <View style={[styles.statusBadge, getStatusColor(order.status)]}>
                 <Text style={styles.statusText}>
-                  {order.status === "completed"
-                    ? "Levererad"
-                    : order.status === "pending"
-                      ? "Väntande"
-                      : "Inställd"}
+                  {getStatusText(order.status)}
                 </Text>
               </View>
             </View>
@@ -106,10 +109,10 @@ export default function OrdersScreen() {
               {order.items.map((item, index) => (
                 <View key={index} style={styles.orderItem}>
                   <Text style={styles.orderItemName}>
-                    {item.name} × {item.quantity}
+                    {item.name} {item.size && `(${item.size})`} × {item.quantity}
                   </Text>
                   <Text style={styles.orderItemPrice}>
-                    {item.price * item.quantity}:-
+                    {item.price * item.quantity}:- 
                   </Text>
                 </View>
               ))}
@@ -117,15 +120,6 @@ export default function OrdersScreen() {
 
             <View style={styles.orderFooter}>
               <Text style={styles.orderTotal}>Total: {order.total}:-</Text>
-              <TouchableOpacity
-                style={styles.viewOrderButton}
-                onPress={() => {
-                  // TODO: Navigate to order detail screen
-                  console.log("View order:", order.id);
-                }}
-              >
-                <Text style={styles.viewOrderButtonText}>Visa detaljer</Text>
-              </TouchableOpacity>
             </View>
           </View>
         ))}
@@ -138,6 +132,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light.background,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.light.background,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: Colors.light.text,
   },
   header: {
     padding: 20,
@@ -256,16 +261,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: Colors.light.text,
-  },
-  viewOrderButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 6,
-    backgroundColor: Colors.light.primary,
-  },
-  viewOrderButtonText: {
-    color: "white",
-    fontWeight: "600",
-    fontSize: 14,
   },
 });

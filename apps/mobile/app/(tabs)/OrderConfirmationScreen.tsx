@@ -7,9 +7,6 @@ import { Ionicons } from "@expo/vector-icons";
 export default function OrderConfirmationScreen() {
   const router = useRouter();
 
-  // TODO: Get order details from route params or context
-  // const { orderNumber, total, items } = useLocalSearchParams();
-
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -22,12 +19,6 @@ export default function OrderConfirmationScreen() {
           Din order har bekräftats och vi har skickat en bekräftelse till din
           e-post.
         </Text>
-
-        {/* TODO: Display order details */}
-        {/* <View style={styles.orderDetails}>
-          <Text style={styles.orderNumber}>Ordernummer: {orderNumber}</Text>
-          <Text style={styles.orderTotal}>Total: {total} kr</Text>
-        </View> */}
 
         <View style={styles.actions}>
           <TouchableOpacity
