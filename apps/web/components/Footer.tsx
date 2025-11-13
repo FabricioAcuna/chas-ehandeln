@@ -1,4 +1,4 @@
 "use client";
-export const Footer: React.FC = () => {
+export default function Footer(){
   return <footer className="footer">© 2025 FootballStore</footer>;
 };

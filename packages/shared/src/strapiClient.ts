@@ -9,11 +9,3 @@ export const strapiGetProducts = async () => {
   return json.data;
 };
 
-export const strapiGetProduct = async (idOrDocId: string) => {
-  const res = await fetch(
-    `${STRAPI_BASE}/api/products/${idOrDocId}?populate=image`
-  );
-  if (!res.ok) throw new Error("Failed to fetch product");
-  const json = await res.json();
-  return json.data;
-};

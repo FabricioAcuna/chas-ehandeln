@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import { useCartStore } from "../store/cartStore"; 
 
-export const Navbar: React.FC = () => {
+export default function Navbar(){
   const navLinks = [
     { href: "/", label: "Hem" },
     { href: "/productsPage", label: "Fotbollströjor" },

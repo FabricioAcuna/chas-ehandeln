@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { strapiGetProducts } from "../../../packages/shared/src/strapiClient";
 import type { Product } from "../../../packages/shared/src/types";
-import { Hero } from "../components/Hero";
+import Hero from "../components/Hero";
 
 export default function HomePage() {
   const {

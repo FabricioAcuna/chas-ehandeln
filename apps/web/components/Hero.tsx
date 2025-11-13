@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-export const Hero: React.FC = () => {
+export default function Hero(){
   return (
     <section className="hero">
       <div className="hero-container">
